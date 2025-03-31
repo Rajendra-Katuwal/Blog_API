@@ -176,13 +176,37 @@ class CommentListCreate(mixins.ListModelMixin,
     """
     List all the comments from the database and create a comment for a post.
     """
-    queryset = Comments.objects.all()
+    # queryset = Comments.objects.all()
     serializer_class = CommentSerializer
+    lookup_field = 'blog_id'  # the field from the model with which we want to look up the data in the database
+    lookup_url_kwarg = 'blog_id'  # Specify the URL keyword argument name to use for lookup
+    # The above two attributes becomes like "lookup_field = look_url_kwarg" at last the 
+
+    def get_queryset(self):
+        blog_id = self.kwargs.get(self.lookup_url_kwarg)  # Get the blog_id from the URL kwargs
+        # Check if the blog with the given blog_id exists
+        if not Blog.objects.filter(pk=blog_id).exists():
+            return Response({"message": "No blog with this id found."}, status=status.HTTP_404_NOT_FOUND)
+        # Filter the queryset based on the blog_id
+        return Comments.objects.filter(blog_id=blog_id)
+    
 
     def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        if type(queryset)==Response:
+            return queryset
+        if queryset==None:
+            return Response({"message": "No comment yet."})
         return self.list(self, request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        if type(queryset)==Response:
+            return queryset
+        # Get the blog_id from the URL kwargs
+        blog_id = self.kwargs.get('blog_id')
+        request.data['blog'] = blog_id  # Add the blog_id to the request data
+        # Now call the create method to save the comment
         return self.create(request, *args, **kwargs)
 
 
@@ -191,10 +215,21 @@ class CommentDetail(mixins.DestroyModelMixin,
                     mixins.UpdateModelMixin,
                     generics.GenericAPIView):
     """
-    Retrieve all the comments from a particular blog , Delete, Update.
+    Retrieve, Delete, Update the comments from a particular blog.
     """
+    queryset = Comments.objects.all()
+    serializer_class = CommentSerializer
+    lookup_field = 'comment_id'  # Specify the field name to use for lookup
 
-    pass
-        
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+    
+    def update(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+    
+    def partial_update(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
 

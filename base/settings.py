@@ -41,9 +41,11 @@ INSTALLED_APPS = [
 
     # Third-party apps
     'rest_framework',
+    'rest_framework_simplejwt',
 
     # Local apps
     'blog',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -106,13 +108,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# # Rest Framework settings
-# # https://www.django-rest-framework.org/api-guide/settings/#settings
-# REST_FRAMEWORK = {
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-#     ]
-# }
+# Rest Framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ),
+}
+
 
 
 # Internationalization

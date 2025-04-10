@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import BlogSerializer, CommentSerializer
@@ -7,6 +8,7 @@ from .models import Blog, Comments
 
 # For fetching all the blogs from the database
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_all_blogs(request):
     all_blogs = Blog.objects.all()
     serializer = BlogSerializer(all_blogs, many=True)
@@ -14,6 +16,7 @@ def get_all_blogs(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_by_id(request, id):
     try:
         blog = Blog.objects.get(pk=id)
@@ -25,6 +28,7 @@ def get_by_id(request, id):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def delete_blog(request, id):
     try:
         blog = Blog.objects.get(pk=id)
@@ -34,6 +38,7 @@ def delete_blog(request, id):
         return Response({"message": "Blog doesn't exists"}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_blog(request):
     serializer = BlogSerializer(data=request.data)
     if serializer.is_valid():
@@ -42,6 +47,7 @@ def create_blog(request):
     return Response({"error": serializer.errors, "message": serializer.error_messages}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def update_blog(request, id):
     try:
         blog = Blog.objects.get(pk=id)
@@ -56,6 +62,7 @@ def update_blog(request, id):
 
 # For posting comment in a certain blog
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def post_comment(request):
     data = request.data
     blog_id = data.get("blog_id")
@@ -76,6 +83,7 @@ def post_comment(request):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def get_blog_comments(request, blog_id):
     try:
         comments = Comments.objects.filter(blog_id=blog_id)
@@ -87,6 +95,7 @@ def get_blog_comments(request, blog_id):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def delete_comment(request, comment_id):
     try:
         comment = Comments.objects.get(pk=comment_id)

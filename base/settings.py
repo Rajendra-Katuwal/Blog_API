@@ -27,6 +27,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     # Default apps
+    'user',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -37,10 +38,10 @@ INSTALLED_APPS = [
     # Third-party apps
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 
     # Local apps
     'blog',
-    'user',
 ]
 
 MIDDLEWARE = [
@@ -115,7 +116,7 @@ REST_FRAMEWORK = {
 
 # Settings for the JWT authentication
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=2),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=10),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -127,10 +128,11 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+    'TOKEN_BLACKLIST_ENABLED': True,
 }
 
 # Custom user model
-# AUTH_USER_MODEL = "user.CustomUser"
+AUTH_USER_MODEL = "user.CustomUser"
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/

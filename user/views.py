@@ -37,7 +37,7 @@ def register(request):
     if serializer.is_valid():
         user = serializer.save()
         # Send email verification asynchronously
-        Thread(target=send_email_verification_mail, args=(request, user)).start()
+    # Thread(target=send_email_verification_mail, args=(request, user)).start()
 
         return Response({"message": "Account Created. Verify your email to activate."}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -67,7 +67,6 @@ def login(request):
     password = request.data.get('password')
     try:
         user = User.objects.get(email=email)
-        print(user)
     except User.DoesNotExist:
         return Response({'error': 'Invalid email or password'}, status=status.HTTP_400_BAD_REQUEST)
     

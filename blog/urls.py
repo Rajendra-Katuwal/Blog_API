@@ -5,7 +5,7 @@ from .views import BlogListCreate, BlogDetails, CommentListCreate, CommentDetail
 urlpatterns = [
     # URLs for Blog CRUD operations
     path('create', create_blog, name="create_blog"),
-    path('get_all', get_all_blogs, name="get_all_blogs"),
+    path('get-all', get_all_blogs, name="get_all_blogs"),
     path('<int:id>', get_by_id, name="get_by_id"),
     path('update/<int:id>', update_blog, name="update_blog"),
     path('delete/<int:id>', delete_blog, name="delete_blog"),
